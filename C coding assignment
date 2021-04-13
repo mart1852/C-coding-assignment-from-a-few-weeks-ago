@@ -1,0 +1,759 @@
+/***************************************************************************
+     2   *     
+     3   *  Programmers and Purdue Email Addresses:
+     4   *
+     5   *  1. mart1852@purdue.edu
+     6   *                            
+     7   *  hw #: hw05.c
+     8   *                                          
+     9   *  Academic Integrity Statement:
+    10   *                                                      
+    11   *  We have not used source code obtained from any other unauthorized source,
+    12   *  either modified or unmodified.  Neither have we provided access to our code
+    13   *  to another. The effort we are submitting is our own original work.
+    14   *
+    15   *  Day, Time, Location of Lab: Thursday, 11:30, HAMP 3144
+    16   *                                                                                          
+    17   *  Program Description: This program receives a year and an accurance for determining the start and end dates of a week
+    18   *                                                                                                      
+    19   ***************************************************************************/
+    20 
+    21  #include <stdio.h>
+    22  #include<stdlib.h>
+    23  #include<string.h>
+    24 
+    25  //FUNCTION DECLARATIONS
+    26  int input_year(); //recieves the input for the year
+    27  int input_occurance(); //recieves the input of the occurance
+    28  int determin_month(int*, int*, int*,int,int*); //determins the value for the month
+    29  int leap_year_check(int, int,int,int,int, int, int, int,int*,int*,int*,int, int*); //determins if the year is a leap year
+    30  int determin_month2(int*, int*, int*,int,int*, int*); //determins the second values for the month
+    31  int leap_year_check2(int, int,int,int,int, int, int, int,int*,int*,int*,int, int, int, int, int); //determins the second values for the week
+    32  int calender(int, int, int, int); //creates the main values for printing the calender
+    33  int day_print1(int); //subfunction for printing the day
+    34  int day_print2(int); //subfunction for printing the day
+    35  int month_print(int); //subfunction for printing the month
+    36 
+    37  int main()
+    38  {
+    39    //LOCAL DECLARATIONS
+    40    int year; //recieves the value of the year
+    41    int week; //determins the value of the week
+    42    int day; //determins the value of the start and end days
+    43    int month; //determins the values in the month
+    44    int d = 0; //determins the values of the days
+    45    int m = 0; //recieves the value of the month
+    46    int ye = 0; //recieves the value of the year
+    47    int days; // find days total
+    48    int in_month; //detailes how many days are in the current month
+    49    int mon = 0; //copies the month value
+    50    int d1; //copies the values for the days
+    51    int year_saved; //copies the values for the years
+    52    int wone; //copies the values for the count of the w
+    53    int w_used = 0; //copies the value for the count w used for another part of the function
+    54    int d2; // copies the values for the days
+    55    int wtwo; //copies the value of the count w
+    56    int m1; //copies the value of the m for later use
+    57    int year_check; //checks if the year is a leap year
+    58 
+    59    //EXECUTABLE STATEMENTS
+    60    year = input_year();
+    61    week = input_occurance();
+    62    day = determin_month(&days,&in_month,&year, week, &month);
+    63    leap_year_check(day,d,m,ye,year, month, in_month, mon, &d1, &year_saved, &wone, w_used, &m1);
+    64    day = determin_month2(&days,&in_month,&year, week, &month, &year_check);
+    65    leap_year_check2(day,d,m,ye,year, month, in_month, mon, &d2, &year_saved, &wtwo, w_used, week, m1, year_check, wone);
+    66    calender(wone, d1,d2, in_month);
+    67 
+    68    return 0;
+    69 
+    70  }
+    71 
+    72  /***************************************************************************
+    73   *      
+    74   *  Function Information
+    75   *                  
+    76   *  Name of Function: input
+    77   *                              
+    78   *  Function Return Type: int
+    79   *                                         
+    80   *  Parameters (list data type, name, and comment one per line):
+    81   *    1.
+    82   *    2.
+    83   *    3.
+    84   *                                                                        
+    85   *  Function Description: Receives input from the user of the base 10 digit
+    86   *                                                                                    
+    87   ***************************************************************************/
+    88 
+    89  int input_year()
+    90  {
+    91    int num; //Stores the value of the base 10 digit inputed from user
+    92 
+    93    printf("Enter year number-> ");
+    94    scanf("%d",&num);
+    95 
+    96    return(num);
+    97  }
+    98 
+    99  /***************************************************************************
+   100   *      
+   101   *  Function Information
+   102   *                  
+   103   *  Name of Function: input_occurance
+   104   *                              
+   105   *  Function Return Type: int
+   106   *                                          
+   107   *  Parameters (list data type, name, and comment one per line):
+   108   *    1.
+   109   *    2.
+   110   *    3.
+   111   *                                                                        
+   112   *  Function Description: Receives input from the user of the base 10 digit
+   113   *                                                                                    
+   114   ***************************************************************************/
+   115  int input_occurance()
+   116  {
+   117    int occ; //Stores the value of the base 10 digit inputed from user
+   118 
+   119    printf("Enter occurence number-> ");
+   120    scanf("%d",&occ); //input week
+   121    return(occ);
+   122  }
+   123  /***************************************************************************
+   124   *      
+   125   *  Function Information
+   126   *                  
+   127   *  Name of Function: determin_month
+   128   *                              
+   129   *  Function Return Type: int
+   130   *                                         
+   131   *  Parameters (list data type, name, and comment one per line):
+   132   *    1.int days
+   133   *    2.int in_month
+   134   *    3.int year
+   135   *    4.int week
+   136   *    5.int month
+   137   *  Function Description: Receives input from the and determins the month
+   138   *                                                                                          
+   139   ***************************************************************************/
+   140  int determin_month(int *days, int *in_month, int *year,int week, int *month)
+   141  {
+   142    int day; //declares the value for the day
+   143    *days = (week * 7) - 6; //find days total
+   144    if(*days > 365) //find day of month and month number
+   145    {
+   146      *days = *days - 365 * (*days / 365);
+   147      *in_month = 31;
+   148      year++;
+   149    }
+   150    if(*days <= 31)
+   151    {
+   152      *month = 1;
+   153      *in_month = 31;
+   154      day = *days;
+   155    }
+   156    else if(*days <= 59)
+   157    {
+   158      *month = 2;
+   159      *in_month = 28;
+   160      day = *days - 31;
+   161    }
+   162    else if(*days <= 90)
+   163    {
+   164      *month = 3;
+   165      *in_month = 31;
+   166      day = *days - 59;
+   167    }
+   168    else if(*days <= 120)
+   169    {
+   170      *month = 4;
+   171      *in_month = 30;
+   172      day = *days - 90;
+   173    }
+   174    else if(*days <= 151)
+   175    {
+   176      *month = 5;
+   177      *in_month = 31;
+   178      day = *days - 120;
+   179    }
+   180    else if(*days <= 181)
+   181    {
+   182      *month = 6;
+   183      *in_month = 30;
+   184      day = *days - 151;
+   185    }
+   186    else if( *days <= 212)
+   187    {
+   188      *month = 7;
+   189      *in_month = 31;
+   190      day = *days - 181;
+   191    }
+   192    else if( *days <= 243)
+   193    {
+   194      *month = 8;
+   195      *in_month = 31;
+   196      day = *days - 212;
+   197    }
+   198    else if(*days <= 273)
+   199    {
+   200      *month = 9;
+   201      *in_month = 30;
+   202      day = *days - 243;
+   203    }
+   204    else if(*days <= 304)
+   205    {
+   206      *month = 10;
+   207      *in_month = 31;
+   208      day = *days - 273;
+   209    }
+   210    else if(*days <= 334)
+   211    {
+   212      *month = 11;
+   213      *in_month = 30;
+   214      day = *days - 304;
+   215    }
+   216    else if(*days <= 365)
+   217    {
+   218      *month = 12;
+   219      *in_month = 31;
+   220      day = *days - 334;
+   221    }
+   222    return(day);
+   223  }
+   224 
+   225  /***************************************************************************
+   226   * *
+   227   * *  Function Information
+   228   * *
+   229   * *  Name of Function: leap_year_check
+   230   * *
+   231   * *  Function Return Type: int
+   232   * *
+   233   * *  Parameters (list data type, name, and comment one per line):
+   234   * *    1.int day
+   235   * *    2.int d
+   236   * *    3. int m
+   237   * *    4. int ye
+   238   * *    5. int year
+   239   * *    6. int month
+   240   * *    7. int in_month
+   241   * *    8. int mon
+   242   * *    9. int *d1
+   243   * *    10.int *year_saved
+   244   * *    11.int *wone
+   245   * *    12.int w_used
+   246   * *    13.int *m1
+   247   * *  Function Description: Receives input from the user of the base 10 digit
+   248   * *
+   249   * ***************************************************************************/
+   250  int leap_year_check(int day, int d, int m, int ye, int year, int month, int in_month, int mon, int *d1, int *year_saved, int *wone,int w_used, int *m1)
+   251  {
+   252    int y; //declares for a place holder for the year
+   253    int c; //declares for a place holder for c
+   254 
+   255    *year_saved = ye; //saves the value of the year to another variable
+   256    m = month; //converts the month to a place holder
+   257    d = day; //converts the day to a place holder
+   258    *m1 = m; //stores the value of m in a place holder
+   259    ye = year; //stores the values of the year
+   260    *year_saved = ye; //stores the value of the year to a different variable to be modified
+   261 
+   262    if((year % 4 == 0) && (month > 2))
+   263    {
+   264      day = day - 1; //sets day to a more fitting count
+   265      d = day; //sets the day to a variable
+   266      in_month = 29; //sets the month to 29 for a leap year
+   267    }
+   268 
+   269    if(month > 2)
+   270    {
+   271      mon = month; //sets the month equal to a variable to be used later
+   272    }
+   273    else
+   274    {
+   275      mon = (12 + month);
+   276      year--;
+   277    }
+   278    y = year % 100; //sets the year to a variable
+   279    c = year / 100; //sets for another counting variable
+   280    *wone = (day + (13 * (mon + 1)) / 5 + y + y / 4 + c / 4 + (5 * c)); //calculates for the wone variable
+   281    *wone = *wone % 7; //finishes the wone variable calculation
+   282    w_used = *wone; //saves the calculation for use in a different function
+   283    *d1 = d; //saves d fir use in another function
+   284    printf("\nStart of week: ");
+   285    day_print2(*wone); //uses done to get the value of the day to print
+   286    month_print(m); //uses the value of m to get the month to print
+   287    printf(" "); //prints a space so that everything runs smooth
+   288    printf("%d, %d\n",d,ye); //prints the final statement of the function
+   289 
+   290    return(0);
+   291  }
+   292  /***************************************************************************
+   293   *
+   294   *  Function Information
+   295   *                  
+   296   *  Name of Function: determin_month2
+   297   *                              
+   298   *  Function Return Type: int
+   299   *                                          
+   300   *  Parameters (list data type, name, and comment one per line):
+   301   *    1.int days
+   302   *    2.int in_month
+   303   *    3.int year
+   304   *    4.int week
+   305   *    5.int in_month
+   306   *    6.int *year
+   307   *    7.int week
+   308   *    8.int *month
+   309   *    9.int *year_check
+   310   *  Function Description: Receives input from the and determins the month
+   311   *                                                                                                                  
+   312   ***************************************************************************/
+   313  int determin_month2(int *days, int *in_month, int *year,int week, int *month, int *year_check)
+   314  {
+   315    int day; //place holder of the days value
+   316 
+   317    *days = (week * 7);
+   318    *year_check = *days;
+   319 
+   320    if(*days > 365)
+   321    {
+   322      *days = *days - 365 * (*days / 365);
+   323      *in_month = 31;
+   324 
+   325      year++;
+   326    }
+   327 
+   328    if(*days <= 31)
+   329    {
+   330      *month = 1;
+   331      *in_month = 31;
+   332      day = *days;
+   333    }
+   334 
+   335    else if(*days <= 59)
+   336    {
+   337      *month = 2;
+   338      *in_month = 31;
+   339      day = *days - 31;
+   340    }
+   341 
+   342    else if(*days <= 90)
+   343    {
+   344      *month = 3;
+   345      *in_month = 28;
+   346      day = *days - 59;
+   347      if(*year % 4 == 0)
+   348      {
+   349        *in_month = 29;
+   350      }
+   351    }
+   352 
+   353    else if(*days <= 120)
+   354    {
+   355      *month = 4;
+   356      *in_month = 31;
+   357      day = *days - 90;
+   358    }
+   359 
+   360    else if(*days <= 151)
+   361    {
+   362      *month = 5;
+   363      *in_month = 30;
+   364      day = *days - 120;
+   365    }
+   366 
+   367    else if(*days <= 181)
+   368    {
+   369      *month = 6;
+   370      *in_month = 31;
+   371      day = *days - 151;
+   372    }
+   373 
+   374    else if( *days <= 212)
+   375    {
+   376      *month = 7;
+   377      *in_month = 31;
+   378      day = *days - 181;
+   379    }
+   380 
+   381    else if( *days <= 243)
+   382    {
+   383      *month = 8;
+   384      *in_month = 30;
+   385      day = *days - 212;
+   386    }
+   387 
+   388    else if(*days <= 273)
+   389    {
+   390      *month = 9;
+   391      *in_month = 31;
+   392      day = *days - 243;
+   393    }
+   394 
+   395    else if(*days <= 304)
+   396    {
+   397      *month = 10;
+   398      *in_month = 30;
+   399      day = *days - 273;
+   400    }
+   401 
+   402    else if(*days <= 334)
+   403    {
+   404      *month = 11;
+   405      *in_month = 31;
+   406      day = *days - 304;
+   407    }
+   408 
+   409    else if(*days <= 365)
+   410    {
+   411      *month = 12;
+   412      *in_month = 31;
+   413      day = *days - 334;
+   414    }
+   415 
+   416    return(day);
+   417  }
+   418  /***************************************************************************
+   419   * *
+   420   * *  Function Information
+   421   * *
+   422   * *  Name of Function: leap_year_check2
+   423   * *
+   424   * *  Function Return Type: int
+   425   * *
+   426   * *  Parameters (list data type, name, and comment one per line):
+   427   * *    1.int day
+   428   * *    2.int d
+   429   * *    3. int m
+   430   * *    4. int ye
+   431   * *    5. int year
+   432   * *    6. int month
+   433   * *    7. int in_month
+   434   * *    8. int mon
+   435   * *    9. int *d2
+   436   * *    10.int *year_saved
+   437   * *    11.int *wtwo
+   438   * *    12.int w_used
+   439   * *    13.int *m1
+   440   * *    14. int week
+   441   * *    15. int year_check
+   442   * *    16. *int wone
+   443   * *
+   444   * *
+   445   * *  Function Description: Receives input from the user of the base 10 digit
+   446   * *
+   447   * ***************************************************************************/
+   448  int leap_year_check2(int day, int d, int m, int ye, int year, int month, int in_month, int mon, int *d2, int *year_saved, int *wtwo,int w_used, int week, int m1, int year_check, int wone)
+   449  {
+   450    int y; //placeholder for the year
+   451    int c; // place holder for the c count
+   452    ye = year; //deals with copying the year
+   453    d = day;
+   454    m = month;
+   455    *year_saved = ye;
+   456 
+   457    if((year % 4 == 0) && (month > 2))
+   458    {
+   459      day = day - 1;
+   460      in_month = 29; //sets the month to 29 for a leap year 
+   461      d = day;
+   462    }
+   463    if(month > 2)
+   464    {
+   465      mon = month;
+   466    }
+   467 
+   468    else
+   469    {
+   470      mon = (12 + month);
+   471      year--;
+   472    }
+   473    y = year % 100;
+   474    c = year / 100;
+   475    *wtwo = (day + (13 * (mon + 1)) / 5 + y + y / 4 + c / 4 + (5 * c));
+   476    *wtwo = *wtwo % 7;
+   477    w_used = *wtwo;
+   478    *d2 = d;
+   479 
+   480    if (week > 52)
+   481    {
+   482      ye = ye + 1;
+   483    }
+   484 
+   485    printf("End of week: ");
+   486    if (year_check > 365)
+   487    {
+   488      *wtwo = wone - 1;
+   489    }
+   490    day_print2(*wtwo);
+   491    month_print(m);
+   492    printf(" ");
+   493    printf("%d, %d\n",d,ye);
+   494    printf("\n         ");
+   495 
+   496    if (m1 == 1 || m1 == 8 || m1 == 10)
+   497    {
+   498      printf(" ");   
+   499      month_print(m1);
+   500    }
+   501 
+   502    if (m1 == 3 || m1 == 4 || m1 == 6 || m1 == 7)
+   503    {
+   504      printf("  ");
+   505      month_print(m1);
+   506    }
+   507 
+   508    if (m1 == 5)
+   509    {
+   510      printf("   ");
+   511      month_print(m1);
+   512    }
+   513 
+   514    if (m1 == 9)
+   515    {
+   516      month_print(m1);
+   517    }
+   518 
+   519    if (m1 == 2 || m1 == 11 || m1 == 12)
+   520    {
+   521      month_print(m1);
+   522    }
+   523    printf("\n");
+   524 
+   525    return(0);
+   526  }
+   527 
+   528  /***************************************************************************
+   529   *      
+   530   *  Function Information
+   531   *                  
+   532   *  Name of Function: calender
+   533   *                              
+   534   *  Function Return Type: int
+   535   *                                          
+   536   *  Parameters (list data type, name, and comment one per line):
+   537   *    1.int d1
+   538   *    2.int d2
+   539   *    3.int wone
+   540   *    4.int in_month
+   541   *  Function Description: Receives input and creates the calender
+   542   *                                                                                    
+   543   ***************************************************************************/
+   544  int  calender(int wone, int d1,int d2, int in_month)
+   545  {
+   546    int c_blank = 0; //initializes for a count of blanks
+   547    int d_blank = 0; //initializes for a count of iterations
+   548    int week_blank = 0; // is the product of c and d blank
+   549    int h = 0; //counts comparitively to the wone function hold
+   550    int j; //new place holder for the day functions
+   551 
+   552    printf("-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+   553    printf("Sun Mon Tue Wed Thu Fri Sat\n");
+   554    if ((wone) > -1)
+   555    {
+   556      for (h = 0; (wone - 1) > h; h++)
+   557      {
+   558        printf("    ");
+   559        c_blank = c_blank + 1;
+   560      }
+   561    }
+   562 
+   563    if ((wone - 1) <= -1)
+   564    {
+   565      wone = 7;
+   566      for (h = 0; (wone - 1) > h; h++)
+   567      {
+   568        printf("    ");
+   569        c_blank = c_blank + 1;
+   570      }
+   571    }
+   572 
+   573    if (d1 < d2)
+   574    {
+   575      for ( j = d1; j <= d2; j++)
+   576      {
+   577        printf(" %-2d ",j);
+   578        d_blank = d_blank + 1;
+   579        week_blank = d_blank + c_blank;
+   580        if (week_blank == 7)
+   581        {
+   582          printf("\n");
+   583        }
+   584      }
+   585    }
+   586 
+   587    if (d1 > d2)
+   588    {
+   589      for (j = d1; j <= (in_month); j++)
+   590      {
+   591        d_blank = d_blank + 1;
+   592        printf(" %-2d ",j);
+   593        week_blank = d_blank + c_blank;
+   594        if (week_blank == 7)
+   595        {
+   596          printf("\n");
+   597        }
+   598      }
+   599 
+   600      d1 = 1;
+   601      for (j = d1; j <= d2; j++)
+   602      {
+   603        d_blank = d_blank + 1;
+   604        printf(" %-2d ",j);
+   605        week_blank = d_blank + c_blank;
+   606        if (week_blank == 7)
+   607        {
+   608          printf("\n");
+   609        }
+   610      }
+   611    }
+   612    printf("\n");
+   613 
+   614    return(0);
+   615  }
+   616  /***************************************************************************
+   617   *     
+   618   *  Function Information
+   619   *                  
+   620   *  Name of Function: day_print1
+   621   *                              
+   622   *  Function Return Type: int
+   623   *                                          
+   624   *  Parameters (list data type, name, and comment one per line):
+   625   *    3.int wone
+   626   *  Function Description: determins the first cay of the week
+   627   *                                                                  
+   628   ***************************************************************************/
+   629  int day_print1(int wone)
+   630  {
+   631    switch (wone)
+   632    {
+   633      case 0:
+   634        printf("Saturday ");
+   635        break;
+   636      case 1:
+   637        printf("Sunday ");
+   638        break;
+   639      case 2:
+   640        printf("Monday ");
+   641        break;
+   642      case 3:
+   643        printf("Tuesday ");
+   644        break;
+   645      case 4:
+   646        printf("Wednesday ");
+   647        break;
+   648      case 5:
+   649        printf("Thursday ");
+   650        break;
+   651      case 6:
+   652        printf("Friday ");
+   653        break;
+   654    }
+   655 
+   656    return 0;
+   657  }
+   658 
+   659  /***************************************************************************
+   660   *      
+   661   *  Function Information
+   662   *                  
+   663   *  Name of Function: day_print2
+   664   *                              
+   665   *  Function Return Type: int
+   666   *                                          
+   667   *  Parameters (list data type, name, and comment one per line):
+   668   *    3.int wtwo
+   669   *  Function Description: determins the first cay of the week
+   670   *                                                                  
+   671   ***************************************************************************/
+   672  int day_print2(int wtwo)
+   673  {
+   674    switch (wtwo)
+   675    {
+   676      case 0:
+   677        printf("Saturday ");
+   678        break;
+   679      case 1:
+   680        printf("Sunday ");
+   681        break;
+   682      case 2:
+   683        printf("Monday ");
+   684        break;
+   685      case 3:
+   686        printf("Tuesday ");
+   687        break;
+   688      case 4:
+   689        printf("Wednesday ");
+   690        break;
+   691      case 5:
+   692        printf("Thursday ");
+   693        break;
+   694      case 6:
+   695        printf("Friday ");
+   696        break;
+   697    }
+   698 
+   699    return (0);
+   700  }
+   701 
+   702  /***************************************************************************
+   703   *      
+   704   *  Function Information
+   705   *
+   706   *  Name of Function: month_print
+   707   *                              
+   708   *  Function Return Type: int
+   709   *                                          
+   710   *  Parameters (list data type, name, and comment one per line):
+   711   *    3.int m
+   712   *  Function Description: determins the first cay of the week
+   713   *                                                                  
+   714   ***************************************************************************/
+   715  int month_print(int m)
+   716  {
+   717    m = m - 1;
+   718 
+   719    switch (m)
+   720    {
+   721      case 0:
+   722        printf("January");
+   723        break;
+   724      case 1:
+   725        printf("February");
+   726        break;
+   727      case 2:
+   728        printf("March");
+   729        break;
+   730      case 3:
+   731        printf("April");
+   732        break;
+   733      case 4:
+   734        printf("May");
+   735        break;
+   736      case 5:
+   737        printf("June");
+   738        break;
+   739      case 6:
+   740        printf("July");
+   741        break;
+   742      case 7:
+   743        printf("August");
+   744        break;
+   745      case 8:
+   746        printf("September");
+   747        break;
+   748      case 9:
+   749        printf("October");
+   750        break;
+   751      case 10:
+   752        printf("November");
+   753        break;
+   754      case 11:
+   755        printf("December");
+   756        break;
+   757    }
+   758    return (0);
+   759  }
